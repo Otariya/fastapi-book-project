@@ -13,14 +13,15 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Deploy to Server
+      - name: Deploy to AWS EC2
         uses: appleboy/ssh-action@v0.1.6
         with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
+          host: 44.204.176.145  # EC2 Public IP
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /path/to/project
-            git pull origin main
-            docker-compose down
-            docker-compose up --build -d
+            cd ~/fastapi-book-project  # Navigate to project directory
+            git pull origin main       # Pull latest changes
+            source venv/bin/activate   # Activate virtual environment
+            pip install -r requirements.txt  # Install dependencies
+            sudo systemctl restart fastapi   # Restart FastAPI service
