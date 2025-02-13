@@ -1,0 +1,28 @@
+services:
+  fastapi:
+    build: .
+    container_name: fastapi_app
+    ports:
+      - "8000:8000"
+    restart: always
+    volumes:
+      - .:/app
+    environment:
+      - UVICORN_WORKERS=4  
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx_proxy
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro  # ✅ Ensure the path exists
+    ports:
+      - "80:80"
+    depends_on:
+      - fastapi
+
+  ubuntu:
+    image: ubuntu:latest
+    container_name: ubuntu_container
+    tty: true  # Keeps the container running
+    stdin_open: true  # Allows interaction with the container
+    command: sleep infinity  # Keeps it running in the background
